@@ -144,10 +144,11 @@ def parse_skill_entries(skills_string):
     # --- Comma-separated branch ---
     tokens = [
         s.strip().lower()
-        for s in skills_string.split(",")
+        for s in skills_string.split(",") 
         if s.strip()  # skip blanks produced by trailing / consecutive commas
     ]
-    return [SKILL_SYNONYMS.get(token, token) for token in tokens]
+    if duplicates := [SKILL_SYNONYMS.get(token, token) for token in tokens]:
+        return list(dict.fromkeys(duplicates))  # deduplicate while preserving order
 
 
 parse_skills = parse_skill_entries
