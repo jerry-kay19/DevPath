@@ -1338,3 +1338,11 @@ def test_ml_recommendation_prefers_relevant_python_data_project():
     recs = results.get("recommendations", [])
     titles = [project["title"] for project in recs]
     assert any("Data" in title or "Pipeline" in title for title in titles)
+
+def test_parse_skill_entries_deduplicates_synonyms():
+    """Verify parse_skill_entries and also  removes duplicate canonical tokens after alias resolution."""
+    from utils.recommender import parse_skill_entries
+
+    raw_input = "python, py, Python"
+    result = parse_skill_entries(raw_input)
+    assert result == ["python"]
