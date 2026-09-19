@@ -1340,9 +1340,16 @@ def test_ml_recommendation_prefers_relevant_python_data_project():
     assert any("Data" in title or "Pipeline" in title for title in titles)
 
 def test_parse_skill_entries_deduplicates_synonyms():
-    """Verify parse_skill_entries and also  removes duplicate canonical tokens after alias resolution."""
+    """Verify that parse_skill_entries removes duplicate canonical tokens."""
     from utils.recommender import parse_skill_entries
 
-    raw_input = "python, py, Python"
-    result = parse_skill_entries(raw_input)
-    assert result == ["python"]
+    raw_input = "python, py, Python, flask"
+
+    assert parse_skill_entries(raw_input) == ["python", "flask"]
+
+def test_parse_skill_entries_returns_empty_list_for_blank_input():
+    """Verify that blank comma-separated input returns an empty list."""
+    from utils.recommender import parse_skill_entries
+
+    assert parse_skill_entries(",,") == []
+    assert parse_skill_entries(" , ") == []

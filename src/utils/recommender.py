@@ -125,38 +125,51 @@ def _normalize_skill(s: str) -> str:
 # that reference SKILL_ALIASES continue to work without modification.
 SKILL_ALIASES = SKILL_SYNONYMS
 def parse_skill_entries(skills_string):
-    """Parse skills with optional per-skill proficiency levels."""
-    if not skills_string or not skills_string.strip():
+    """
+    Parse a skill string and normalize known skill synonyms.
+
+    Supports JSON list input and comma-separated input.
+    Duplicate canonical skills are removed while preserving order.
+    """
+    if not skills_string:
         return []
 
-    stripped = skills_string.strip()
-
-    if stripped.startswith("["):
+    # --- JSON list branch ---
+    if skills_string.strip().startswith("["):
         try:
-            parsed = json.loads(stripped)
-            if isinstance(parsed, list):
-                tokens = [str(s).strip().lower() for s in parsed if str(s).strip()]
-                canonical_tokens = [SKILL_SYNONYMS.get(token, token) for token in tokens]
+            items = json.loads(skills_string)
+            if isinstance(items, list):
+                tokens = [
+                    str(item).strip().lower()
+                    for item in items
+                    if str(item).strip()
+                ]
+
+                canonical_tokens = [
+                    SKILL_SYNONYMS.get(token, token)
+                    for token in tokens
+                ]
+
                 return list(dict.fromkeys(canonical_tokens))
-        except (json.JSONDecodeError, ValueError):
-            pass  # fall through to comma-splitting
+        except (json.JSONDecodeError, TypeError):
+            pass
 
     # --- Comma-separated branch ---
     tokens = [
         s.strip().lower()
         for s in skills_string.split(",")
-        if s.strip()  # skip blanks produced by trailing / consecutive commas
+        if s.strip()
     ]
-    canonical_tokens = [SKILL_SYNONYMS.get(token, token) for token in tokens]
+
+    canonical_tokens = [
+        SKILL_SYNONYMS.get(token, token)
+        for token in tokens
+    ]
+
     return list(dict.fromkeys(canonical_tokens))
+    # deduplicate while preserving order
 
-def test_parse_skill_entries_deduplicates_synonyms():
-    """Verify that parse_skill_entries removes duplicate canonical tokens after alias resolution."""
-    from utils.recommender import parse_skill_entries
 
-    raw_input = "python, py, Python"
-    result = parse_skill_entries(raw_input)
-    assert result == ["python"]
 parse_skills = parse_skill_entries
 
 
