@@ -162,9 +162,13 @@
 </section>
 
 <!-- RESULTS SECTION -->
-<section class="landing-section hidden" id="results-section">
+<section class="landing-section hidden" id="results-section" style="display:none;">
     <div class="landing-container">
         <h2>Your Recommendations</h2>
+
+        <div class="roadmap-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Recommendation progress">
+            <div id="recommendation-progress-fill"></div>
+        </div>
         
         <div id="results-loading" class="text-center py-12 hidden">
             <div class="spinner"></div>
@@ -184,6 +188,17 @@
             <button id="show-more-btn" class="btn-ghost hidden">Show More</button>
         </div>
     </div>
+</section>
+
+<section class="saved-projects-panel" id="saved-projects-panel">
+    <div class="saved-projects-header">
+        <div>
+            <h3>Saved Projects</h3>
+            <p>Projects you bookmarked for later.</p>
+        </div>
+        <span class="saved-projects-count" id="saved-projects-count">0 projects saved</span>
+    </div>
+    <div class="saved-projects-list" id="saved-projects-list"></div>
 </section>
 
 {% endblock %}
